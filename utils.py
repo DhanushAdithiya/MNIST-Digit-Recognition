@@ -2,7 +2,7 @@ import torchvision
 from torch.utils.data import DataLoader
 import config
 import numpy as np
-from PIL import Image
+import matplotlib.pyplot as plt
 
 
 def load_data():
@@ -37,18 +37,27 @@ def load_data():
     return train_data, test_data
 
 
-def tesnsor_to_img(tensor):
+def tensor_to_img(tensor):
     image = tensor.to("cpu").clone().detach()
-    image = image.numpy().squeeze()
-    image = image.transpose(1, 2, 0)
-    image = image * np.array((0.5, 0.5)) + np.array((0.5, 0.5))
-    image = image * 255
-    image = image.astype(np.uint8)
+    image = image.squeeze()
+    image = image.permute(1, 2, 0)
+    image = image.numpy().astype(np.uint8)
     return image
 
 
-def save_image(arr, fp):
-    image = Image.fromarray(arr)
-    image.save(fp)
+def view_classify(img, ps):
+    """
+    Function for saving an image and its predicted classes to a file.
+    """
+    ps = ps.cpu().data.numpy().squeeze()
 
+    # Image processing (same as before)
+    img = img.resize_(1, 28, 28).numpy().squeeze()
+
+    # Generate filename based on class with highest probability (optional)
+    class_id = np.argmax(ps)  # Get index of class with highest probability
+    filename = f"./img/image_{class_id}.png"  # Example filename
+
+    # Save the image
+    plt.imsave(filename, img, cmap="gray" if len(img.shape) == 2 else None)
 

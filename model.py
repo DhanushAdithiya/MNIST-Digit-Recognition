@@ -6,11 +6,14 @@ class CNN(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(CNN, self).__init__()
         self.conv = nn.Sequential(
-            nn.Linear(in_channels, out_channels[0]),
+            nn.Conv2d(in_channels, out_channels[0], kernel_size=3, padding=1),
             nn.ReLU(),
-            nn.Linear(out_channels[0], out_channels[1]),
+            nn.MaxPool2d(2, 2),
+            nn.Conv2d(out_channels[0], out_channels[1], kernel_size=3, padding=1),
             nn.ReLU(),
-            nn.Linear(out_channels[1], 10),
+            nn.MaxPool2d(2, 2),
+            nn.Flatten(),
+            nn.Linear(128 * 7 * 7, 10),
             nn.Softmax(dim=1),
         )
 
